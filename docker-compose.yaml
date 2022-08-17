@@ -38,5 +38,5 @@ services:
     container_name: csv-rabbitmq
     image: "rabbitmq:3.10.7-alpine"
     volumes:
-      - ./rabbitconf/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
+      - ./rabbitconf/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
       - ./rabbitconf/definitions.json:/etc/rabbitmq/definitions.json:ro
