@@ -2,9 +2,9 @@ version: "3.9"
 services:
   backend:
     container_name: csv-backend
-    image: backend
-    build: .
-    dockerfile: Dockerfile.backend
+    build:
+      context: ./
+      dockerfile: Dockerfile.backend
     depends_on:
       - redis
       - rabbitmq
@@ -16,9 +16,9 @@ services:
       - BACKEND_RMQ_EXCHANGE=Tasks
   executor:
     container_name: csv-executor
-    image: executor
-    build: .
-    dockerfile: Dockerfile.executor
+    build:
+      context: ./
+      dockerfile: Dockerfile.executor
     depends_on:
       - redis
       - rabbitmq
@@ -36,7 +36,7 @@ services:
     image: "redis:alpine"
   rabbitmq:
     container_name: csv-rabbitmq
-    image: "rabbitmq:3.10.7"
+    image: "rabbitmq:3.10.7-alpine"
     volumes:
       - ./rabbitconf/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
       - ./rabbitconf/definitions.json:/etc/rabbitmq/definitions.json:ro
