@@ -4,6 +4,6 @@ WORKDIR /app
 
 RUN pip install flask pika redis gunicorn
 
-COPY backend/ /app/
+COPY backend /app/backend
 
 ENTRYPOINT ["gunicorn", "-w", "1", "-b", "0.0.0.0:80", "'backend:app'"]

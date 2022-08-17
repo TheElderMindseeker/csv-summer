@@ -4,6 +4,6 @@ WORKDIR /app
 
 RUN pip install aio-pika redis boto3
 
-COPY executor/ /app/
+COPY executor /app/executor/
 
 ENTRYPOINT ["python", "-m", "executor"]
