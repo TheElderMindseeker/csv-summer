@@ -1,12 +1,12 @@
 import asyncio
 import json
+import logging
 import os
 from concurrent.futures import ThreadPoolExecutor
 
 import aio_pika
-import redis
 import boto3
-
+import redis
 
 redis_db = redis.from_url(os.environ['EXECUTOR_REDIS_URL'], decode_responses=True)
 boto_session = boto3.session.Session(
@@ -41,7 +41,7 @@ async def process_message(message: aio_pika.abc.AbstractIncomingMessage) -> None
             )
             redis_db.set(f'task:{task_id}:status', 'done')
         except Exception as exc:
-            print(exc)
+            logging.exception('Exception during message processing')
             redis_db.set(f'task:{task_id}:status', 'failed')
         finally:
             redis_db.decr('task:active:counter')
