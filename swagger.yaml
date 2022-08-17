@@ -1,0 +1,113 @@
+openapi: 3.0.3
+info:
+  title: Сумматор CSV
+  description: Демо-проект на Python (тестовое задание)
+  contact:
+    name: Даниил
+    url: https://t.me/ElderMindseeker
+    email: daniil.botnarenku@gmail.com
+  version: 0.1.0
+paths:
+  /tasks:
+    post:
+      summary: Создаёт новое задание на суммирование столбцов в CSV-файле
+      requestBody:
+        description: Описание нового задания
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Task'
+            examples:
+              disk:
+                summary: Файл на локальном диске
+                value:
+                  url: /path/to/file
+              s3:
+                summary: Файл в хранилище S3
+                value:
+                  url: 'https://s3.region-code.amazonaws.com/bucket-name/key-name'
+      responses:
+        '200':
+          description: Задание создано и направлено исполнителям
+          content:
+            'application/json':
+              schema:
+                type: object
+                required:
+                  - id
+                properties:
+                  id:
+                    type: integer
+                    description: ID созданного задания
+  /active:
+    get:
+      summary: Показывает количество заданий, находящихся в работе
+      responses:
+        '200':
+          description: Задания посчитаны
+          content:
+            'application/json':
+              schema:
+                type: object
+                required:
+                  - tasks
+                properties:
+                  tasks:
+                    type: integer
+                    description: Количество активных заданий
+  /tasks/{taskId}:
+    get:
+      summary: Выдаёт статус и описание задания по ID
+      parameters:
+        - name: taskId
+          in: path
+          description: ID задания, полученный при создании
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Статус и описание задания
+          content:
+            'application/json':
+              schema:
+                type: object
+                required:
+                  - status
+                  - task
+                properties:
+                  status:
+                    type: string
+                    enum: [done, active, failed]
+                    description: Статус задания
+                  task:
+                    $ref: '#/components/schemas/Task'
+                  result:
+                    type: string
+                    description: Результат выполнения
+              examples:
+                active:
+                  summary: Активное задание
+                  value:
+                    status: active
+                    task:
+                      url: /path/to/file
+                done:
+                  summary: Выполненное задание
+                  value:
+                    status: done
+                    task:
+                      url: /path/to/file
+                    result: '89.242,76.926,88.827,82.072,80.889'
+        '404':
+          description: Задание с указанным ID не найдено
+components:
+  schemas:
+    Task:
+      type: object
+      required:
+        - url
+      properties:
+        url:
+          type: string
+          description: URL CSV-файла
