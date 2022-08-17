@@ -19,6 +19,10 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile.executor
+    restart_policy:
+      condition: on-failure
+      delay: 10s
+      max_attempts: 5
     depends_on:
       - redis
       - rabbitmq
@@ -36,7 +40,7 @@ services:
     image: "redis:alpine"
   rabbitmq:
     container_name: csv-rabbitmq
-    image: "rabbitmq:3.10.7-alpine"
+    image: "rabbitmq:3.10.7-management"
     volumes:
       - ./rabbitconf/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
       - ./rabbitconf/definitions.json:/etc/rabbitmq/definitions.json:ro
