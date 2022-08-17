@@ -1,0 +1,42 @@
+version: "3.9"
+services:
+  backend:
+    container_name: csv-backend
+    image: backend
+    build: .
+    dockerfile: Dockerfile.backend
+    depends_on:
+      - redis
+      - rabbitmq
+    ports:
+      - "8000:80"
+    environment:
+      - BACKEND_REDIS_URL=redis://csv-redis/
+      - BACKEND_RMQ_URL=amqp://backend:backend@csv-rabbitmq/
+      - BACKEND_RMQ_EXCHANGE=Tasks
+  executor:
+    container_name: csv-executor
+    image: executor
+    build: .
+    dockerfile: Dockerfile.executor
+    depends_on:
+      - redis
+      - rabbitmq
+    volumes:
+      - ./data:/app:ro
+    environment:
+      - EXECUTOR_REDIS_URL=redis://csv-redis/
+      - EXECUTOR_AWS_ID
+      - EXECUTOR_AWS_SECRET
+      - EXECUTOR_AWS_URL=https://storage.yandexcloud.net
+      - EXECUTOR_RMQ_URL=amqp://executor:executor@csv-rabbitmq/
+      - EXECUTOR_RMQ_QUEUE=tasks
+  redis:
+    container_name: csv-redis
+    image: "redis:alpine"
+  rabbitmq:
+    container_name: csv-rabbitmq
+    image: "rabbitmq:3.10.7"
+    volumes:
+      - ./rabbitconf/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
+      - ./rabbitconf/definitions.json:/etc/rabbitmq/definitions.json:ro
