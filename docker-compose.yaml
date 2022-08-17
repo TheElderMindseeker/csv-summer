@@ -23,7 +23,7 @@ services:
       - redis
       - rabbitmq
     volumes:
-      - ./data:/app:ro
+      - ./data:/app/data:ro
     environment:
       - EXECUTOR_REDIS_URL=redis://csv-redis/
       - EXECUTOR_AWS_ID
